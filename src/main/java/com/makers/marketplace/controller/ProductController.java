@@ -14,6 +14,10 @@ import com.makers.marketplace.model.User;
 import com.makers.marketplace.repository.UserRepository;
 import com.makers.marketplace.service.ProductService;
 
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
 @RequestMapping("/products")
 public class ProductController {
@@ -40,5 +44,12 @@ public class ProductController {
         product.setUser(user);
         productService.createProduct(product);
         return "redirect:/dashboard";
+    }
+    @GetMapping("/all")
+    public String showAllProducts(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<Product> products = productService.findAll();
+        model.addAttribute("products", products);
+        return "products";
     }
 }
