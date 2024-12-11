@@ -61,9 +61,18 @@ import java.io.Serializable;
         public Long getSellerId() {
             return sellerId;
         }
+
         public void setSellerIdd(Long sellerId) {
             this.sellerId = sellerId;
         }
+
+        public Long getItemId(){
+            return itemId;
+        }
+        public void setItemId(Long itemId){
+            this.itemId = itemId;
+        }
+
 
 
 
