@@ -1,33 +1,41 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-  <title th:text="${product.name}"></title>
+    <title>List a New Product</title>
 </head>
+
 <body>
-<h1 th:text="${product.name}"></h1>
-<div>
-  <h3>Description</h3>
-  <p th:text="${product.description}"></p>
-</div>
+<h2>List a Product</h2>
 
-<div>
-  <h3>Price</h3>
-  <p th:text="'$' + ${product.price}"></p>
-</div>
+<form th:action="@{/products/new}" th:object="${product}" method="post" enctype="multipart/form-data">
 
-<div>
-  <h3>Image</h3>
-  <span th:if="${product.imagePath != null}">
-            <img th:src="@{${product.imagePath}}" alt="Product Image" width="300" height="300"/>
-        </span>
-  <span th:if="${product.imagePath == null}">
-            <p>No image available</p>
-        </span>
-</div>
+    <div>
+        <label>Name:</label>
+        <input th:field="*{name}" required />
+    </div>
 
-<div>
-  <h3>Owner</h3>
-  <p th:text="${product.user.username}"></p>
-</div>
+    <div>
+        <label>Description:</label>
+        <textarea th:field="*{description}" required></textarea>
+    </div>
+
+    <div>
+        <label>Price:</label>
+        <input th:field="*{price}" type="number" step="0.01" required />
+    </div>
+
+    <div>
+        <label>Category:</label>
+        <input th:field="*{category}" required />
+    </div>
+
+    <div>
+        <label>Product Image:</label>
+        <input type="file" name="image" />
+    </div>
+
+    <button type="submit">Submit</button>
+</form>
 </body>
 </html>
