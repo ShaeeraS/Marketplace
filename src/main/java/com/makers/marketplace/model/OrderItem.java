@@ -17,6 +17,8 @@ public class OrderItem {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    // Add order_id when Sajjad makes it
+
     @Column(nullable = false)
     private Integer quantity;
 
