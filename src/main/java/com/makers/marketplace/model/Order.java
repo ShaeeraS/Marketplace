@@ -12,13 +12,18 @@ import java.io.Serializable;
     public class Order implements Serializable {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long orderId;
+        private Long id;
 
         @Column(unique = true, nullable = false)
         private Long sellerId;
 
         @Column(unique = true, nullable = false)
         private Long buyerId;
+
+
+        @Column(unique = true, nullable = false)
+        private Long itemId;
+
 
 
 
@@ -30,18 +35,19 @@ import java.io.Serializable;
         // Constructors
         public Order() {}
 
-        public Order(Long sellerId, Long buyerId) {
+        public Order(Long sellerId, Long buyerId, Long itemId) {
             this.sellerId = sellerId;
             this.buyerId = buyerId;
+            this.itemId = itemId;
         }
 
         // Getters and Setters
         public Long getOrderId() {
-            return orderId;
+            return id;
         }
 
         public void setOrderId(Long id) {
-            this.orderId = id;
+            this.id = id;
         }
 
         public Long getBuyerId() {
