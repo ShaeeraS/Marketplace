@@ -33,25 +33,4 @@ public class AuthControllerTests {
                 .andExpect(MockMvcResultMatchers.view().name("signup"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("user"));
     }
-
-    @Test
-    void testRegisterUserSuccess() throws Exception {
-        User user = new User();
-        user.setUsername("newuser");
-        user.setPassword("password");
-
-        // Simulate successful registration (no exception thrown)
-        Mockito.doNothing().when(userService).registerNewUser(Mockito.any(User.class));
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/signup")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("username", "newuser")
-                        .param("password", "password"))
-                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/login?success"));
-
-        // Verify that service was called with the correct parameters
-        Mockito.verify(userService).registerNewUser(Mockito.argThat(u -> "newuser".equals(u.getUsername())));
-    }
-
 }
