@@ -5,10 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import com.makers.marketplace.model.Product;
 import com.makers.marketplace.model.User;
 import com.makers.marketplace.repository.UserRepository;
@@ -51,5 +48,12 @@ public class ProductController {
         List<Product> products = productService.findAll();
         model.addAttribute("products", products);
         return "products";
+    }
+    @GetMapping("/{id}")
+    public String showProduct(Model model, @PathVariable Long id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Product product = productService.findById(id);
+        model.addAttribute("product", product);
+        return "product";
     }
 }
