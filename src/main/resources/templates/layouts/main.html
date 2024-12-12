@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <title th:replace="${title}">Default Title</title> -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container container">
+            <a th:href="@{/}" class="link">Home</a>
+            <div>
+                <a th:href="@{/login}" class="link">Login</a>
+                <a th:href="@{/signup}" class="link" style="margin-left: 1rem;">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div th:replace="${content}">
+            <!-- Content goes here -->
+        </div>
+    </main>
+</body>
+</html>

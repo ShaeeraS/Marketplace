@@ -1,37 +1,47 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:replace="~{layouts/main :: head}">
     <title>All Products</title>
 </head>
-
 <body>
-<h1>All Products</h1>
-<table border="1">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Price</th>
-        <th>Image</th>
-        <th>Owner</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="product : ${products}">
-        <td th:text="${product.id}"></td>
-        <td>
-            <a th:href="@{/products/{id}(id=${product.id})}" th:text="${product.name}"></a>
-        </td>
-        <td th:text="${product.description}"></td>
-        <td th:text="${product.price}"></td>
-        <td>
-            <img th:if="${product.imagePath}" th:src="@{${product.imagePath}}" alt="Product Image" />
-            <img th:unless="${product.imagePath}" th:src="@{/images/default.png}" alt="Default Image" />
-        </td>
-        <td th:text="${product.user.username}"></td>
-    </tr>
-    </tbody>
-</table>
+    <div th:fragment="content">
+        <div class="card">
+            <h1 style="margin-top: 0;">All Products</h1>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Image</th>
+                            <th>Owner</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="product : ${products}">
+                            <td th:text="${product.id}"></td>
+                            <td>
+                                <a th:href="@{/products/{id}(id=${product.id})}" th:text="${product.name}"></a>
+                            </td>
+                            <td th:text="${#numbers.formatCurrency(product.price)}"></td>
+                            <td>
+                                <img th:if="${product.imagePath != null}"
+                                     th:src="@{${product.imagePath}}"
+                                     alt="Product Image"
+                                     style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
+                                <span th:if="${product.imagePath == null}" style="color: #666;">
+                                    No image
+                                </span>
+                            </td>
+                            <td th:text="${product.user.username}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
