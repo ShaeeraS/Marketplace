@@ -20,14 +20,12 @@ public class Basket {
     @Column(nullable = false)
     private java.sql.Timestamp createdAt = new java.sql.Timestamp(System.currentTimeMillis());
 
-    // Constructors
     public Basket() {}
 
     public Basket(User user) {
         this.user = user;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

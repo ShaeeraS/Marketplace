@@ -23,7 +23,6 @@ public class BasketItem {
     @Column(nullable = false)
     private java.sql.Timestamp createdAt = new java.sql.Timestamp(System.currentTimeMillis());
 
-    // Constructors
     public BasketItem() {}
 
     public BasketItem(Basket basket, Product product, Integer quantity) {
@@ -32,7 +31,6 @@ public class BasketItem {
         this.quantity = quantity;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -57,7 +55,7 @@ public class BasketItem {
         this.product = product;
     }
 
-    
+
     public Integer getQuantity() {
         return quantity;
     }
