@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<<<<<<< HEAD
 <head th:replace="~{layouts/main :: head}">
     <title>List a New Product</title>
 </head>
@@ -8,75 +7,36 @@
     <div th:fragment="content">
         <div class="card" style="max-width: 600px; margin: 2rem auto;">
             <h2 style="margin-top: 0;">List a Product</h2>
-            
+
             <form th:action="@{/products/new}" th:object="${product}" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <label class="form-label">Name</label>
                     <input th:field="*{name}" class="form-input" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Description</label>
                     <textarea th:field="*{description}" class="form-input" rows="4" required></textarea>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Price</label>
                     <input th:field="*{price}" type="number" step="0.01" class="form-input" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Category</label>
                     <input th:field="*{category}" class="form-input" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">Product Image</label>
                     <input type="file" name="image" class="form-input">
                 </div>
-                
+
                 <button type="submit" class="btn btn-primary">Submit Product</button>
             </form>
         </div>
     </div>
-=======
-
-<head>
-    <title>List a New Product</title>
-</head>
-
-<body>
-<h2>List a Product</h2>
-
-<form th:action="@{/products/new}" th:object="${product}" method="post" enctype="multipart/form-data">
-
-    <div>
-        <label>Name:</label>
-        <input th:field="*{name}" required />
-    </div>
-
-    <div>
-        <label>Description:</label>
-        <textarea th:field="*{description}" required></textarea>
-    </div>
-
-    <div>
-        <label>Price:</label>
-        <input th:field="*{price}" type="number" step="0.01" required />
-    </div>
-
-    <div>
-        <label>Category:</label>
-        <input th:field="*{category}" required />
-    </div>
-
-    <div>
-        <label>Product Image:</label>
-        <input type="file" name="image" />
-    </div>
-
-    <button type="submit">Submit</button>
-</form>
->>>>>>> e5183330492bfa3cfc869801d6022874bd434af3
-</body>
+  </body>
 </html>
