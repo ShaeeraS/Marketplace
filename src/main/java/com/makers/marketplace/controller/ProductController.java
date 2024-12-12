@@ -59,21 +59,44 @@ public class ProductController {
 
     @GetMapping("/my")
     public String listUserProducts(Model model) {
-        // Retrieve the current authenticated user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        // Fetch the User entity based on username
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Fetch products listed by the user
         List<Product> userProducts = productService.findProductsByUserId(user.getId());
 
-        // Add products to the model
         model.addAttribute("products", userProducts);
         model.addAttribute("username", username);
 
         return "my_products";
     }
+
+    @PostMapping("/delete/{id}")
+    public String deleteProduct(@PathVariable Long id, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Product product = productService.findById(id);
+        if (product == null) {
+            model.addAttribute("errorMessage", "Product not found.");
+            return "redirect:/products/my?error=ProductNotFound";
+        }
+
+        if (!product.getUser().getId().equals(user.getId())) {
+            // Handle unauthorized deletion attempt
+            model.addAttribute("errorMessage", "You are not authorized to delete this product.");
+            return "redirect:/products/my?error=Unauthorized";
+        }
+
+        productService.deleteProductById(id);
+
+        return "redirect:/products/my?success=ProductDeleted";
+    }
+
+
 }
