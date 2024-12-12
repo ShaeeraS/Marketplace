@@ -38,11 +38,11 @@ public class OrderService {
             Product product = item.getProduct();
             // Example: Mark product as SOLD if it's the last item
             // You might need to adjust this logic based on your requirements
-            if (product.getQuantity() <= item.getQuantity()) {
+            /*if (product.getQuantity() <= item.getQuantity()) {
                 product.setStatus("SOLD");
             } else {
                 product.setQuantity(product.getQuantity() - item.getQuantity());
-            }
+            }*/
             productRepository.save(product);
         }
 
