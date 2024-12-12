@@ -32,6 +32,12 @@ public class OrderController {
 
     @Autowired
     private OrderRepository orderRepository;
+    @GetMapping("/create")
+    public String showOrderForm(Model model) {
+        // Fetch all products and add them to the model
+        model.addAttribute("products", productService.getAllProducts());
+        return "create_order";
+    }
 
     @PostMapping("/create")
     public String createOrder(@RequestParam("productId") Long productId,
@@ -69,9 +75,9 @@ public class OrderController {
         User buyer = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<Order> orders = orderRepository.findByBuyer(buyer);
+        List<Order> orders = orderRepository.findByBuyer(buyer); // Now this will work
         model.addAttribute("orders", orders);
-        return "my_orders";
+        return "my-orders";
     }
 
     // Additional methods to view order details, update status, etc.
