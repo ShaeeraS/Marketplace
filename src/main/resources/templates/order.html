@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Orders</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>My Orders</h1>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Order ID</th>
+        <th>Total Price</th>
+        <th>Status</th>
+        <th>Items</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="order : ${orders}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${order.totalPrice}"></td>
+        <td th:text="${order.status}"></td>
+        <td>
+            <ul>
+                <li th:each="item : ${order.orderItems}">
+                    <span th:text="${item.product.name}"></span> x
+                    <span th:text="${item.quantity}"></span>
+                </li>
+            </ul>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
