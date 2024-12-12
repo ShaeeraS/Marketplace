@@ -31,4 +31,13 @@ public class ProductService {
     public List<Product> findProductsByUserId(Long userId) {
         return productRepository.findByUserId(userId);
     }
+
+    //Delete products:
+    public void deleteProductById(Long productId) {
+        productRepository.deleteById(productId);
+    }
+    public boolean existsById(Long productId) {
+        return productRepository.existsById(productId);
+    }
+
 }
