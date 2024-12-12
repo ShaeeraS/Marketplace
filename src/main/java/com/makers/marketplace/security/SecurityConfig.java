@@ -16,8 +16,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/signup", "/login").permitAll()
-                .requestMatchers("/dashboard").authenticated()  // Ensure dashboard is only for authenticated users
+                .requestMatchers("/signup", "/login", "/css/**", "/js/**", "/images/**", "/static/**", "/resources/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
