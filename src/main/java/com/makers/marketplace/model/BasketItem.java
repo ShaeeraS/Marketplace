@@ -57,6 +57,7 @@ public class BasketItem {
         this.product = product;
     }
 
+    
     public Integer getQuantity() {
         return quantity;
     }
