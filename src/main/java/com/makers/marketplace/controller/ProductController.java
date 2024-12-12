@@ -56,4 +56,24 @@ public class ProductController {
         model.addAttribute("product", product);
         return "product";
     }
+
+    @GetMapping("/my")
+    public String listUserProducts(Model model) {
+        // Retrieve the current authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        // Fetch the User entity based on username
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Fetch products listed by the user
+        List<Product> userProducts = productService.findProductsByUserId(user.getId());
+
+        // Add products to the model
+        model.addAttribute("products", userProducts);
+        model.addAttribute("username", username);
+
+        return "my_products";
+    }
 }

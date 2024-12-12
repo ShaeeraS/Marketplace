@@ -21,7 +21,6 @@ public class Product {
     @Column(nullable = false)
     private String category;
 
-    // This could store just a URL or filename to the image in the static folder or a CDN
     private String imagePath;
 
     // Relationship to User (assuming one-to-many: one user can list many products)
