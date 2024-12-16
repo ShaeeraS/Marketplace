@@ -1,3 +1,4 @@
+// OrderItem.java
 package com.makers.marketplace.model;
 
 import jakarta.persistence.*;
@@ -5,31 +6,31 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "order_items")
 public class OrderItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
+
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private int quantity;
 
-    // Add order_id when Sajjad makes it
+    private double price;
 
-    @Column(nullable = false)
-    private Integer quantity;
+    // Constructors
+    public OrderItem() {
+        // Default constructor
+    }
 
-    @Column(nullable = false)
-    private Double price;
-
-    public OrderItem() {}
-
-    public OrderItem(Product product, User user, Integer quantity, Double price) {
+    public OrderItem(Order order, Product product, int quantity, double price) {
+        this.order = order;
         this.product = product;
-        this.user = user;
         this.quantity = quantity;
         this.price = price;
     }
@@ -43,6 +44,14 @@ public class OrderItem {
         this.id = id;
     }
 
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
     public Product getProduct() {
         return product;
     }
@@ -51,27 +60,19 @@ public class OrderItem {
         this.product = product;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Integer getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
-    public Double getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 }

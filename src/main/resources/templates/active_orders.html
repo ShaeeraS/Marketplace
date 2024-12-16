@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Active Orders</title>
+</head>
+<body>
+
+<h1>Active Orders</h1>
+
+<div th:if="${success}">
+  <p th:text="${success}"></p>
+</div>
+
+<table>
+  <thead>
+  <tr>
+    <th>Order ID</th>
+    <th>Order Date</th>
+    <th>Items</th>
+    <th>Total</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="order : ${orders}">
+    <td th:text="${order.id}"></td>
+    <td th:text="${order.orderDate}"></td>
+    <td>
+      <ul>
+        <li th:each="item : ${order.orderItems}">
+          <span th:text="${item.product.name}"></span> x <span th:text="${item.quantity}"></span>
+        </li>
+      </ul>
+    </td>
+    <td>
+      <span th:text="${#aggregates.sum(order.orderItems.![price])}"></span>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
