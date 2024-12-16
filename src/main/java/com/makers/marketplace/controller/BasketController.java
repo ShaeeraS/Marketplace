@@ -9,13 +9,16 @@ import com.makers.marketplace.repository.BasketRepository;
 import com.makers.marketplace.repository.ProductRepository;
 import com.makers.marketplace.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@RestController
+@Controller
 @RequestMapping("/api/basket")
 public class BasketController {
 
@@ -31,80 +34,100 @@ public class BasketController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<BasketItem>> getBasketItems(@PathVariable Long userId) {
-        Optional<Basket> basket = basketRepository.findByUserId(userId);
-        if (basket.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        List<BasketItem> items = basketItemRepository.findByBasketId(basket.get().getId());
-        return ResponseEntity.ok(items);
-    }
+    @GetMapping("/view")
+    public String viewBasket(Model model) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
 
-    @PostMapping("/{userId}/add")
-    public ResponseEntity<BasketItem> addItemToBasket(@PathVariable Long userId, @RequestBody BasketItemRequest request) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        Optional<Product> productOptional = productRepository.findById(request.getProductId());
-
-        if (userOptional.isEmpty() || productOptional.isEmpty()) {
-            return ResponseEntity.badRequest().build();
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            model.addAttribute("error", "User not found");
+            return "error";
         }
 
         User user = userOptional.get();
-        Product product = productOptional.get();
-        Basket basket = basketRepository.findByUserId(user.getId()).orElseGet(() -> basketRepository.save(new Basket(user)));
+        Optional<Basket> basketOptional = basketRepository.findByUserId(user.getId());
+        if (basketOptional.isEmpty()) {
+            model.addAttribute("basketItems", List.of());
+        } else {
+            Basket basket = basketOptional.get();
+            List<BasketItem> basketItems = basketItemRepository.findByBasketId(basket.getId());
+            model.addAttribute("basketItems", basketItems);
+        }
 
-        BasketItem basketItem = new BasketItem(basket, product, request.getQuantity());
-        basketItemRepository.save(basketItem);
-
-        return ResponseEntity.ok(basketItem);
+        return "basket";
     }
 
-    @PutMapping("/{basketItemId}/update")
-    public ResponseEntity<BasketItem> updateBasketItem(@PathVariable Long basketItemId, @RequestBody BasketItemRequest request) {
-        Optional<BasketItem> basketItemOptional = basketItemRepository.findById(basketItemId);
+        @PostMapping("/add")
+    public String addToBasket(@RequestParam("productId") Long productId, Model model) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
+
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            model.addAttribute("error", "User not found");
+            return "error";
+        }
+
+        User user = userOptional.get();
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isEmpty()) {
+            model.addAttribute("error", "Product not found");
+            return "error";
+        }
+
+        Product product = productOptional.get();
+        Optional<Basket> basketOptional = basketRepository.findByUserId(user.getId());
+        Basket basket;
+        if (basketOptional.isEmpty()) {
+            basket = new Basket();
+            basket.setUser(user);
+            basketRepository.save(basket);
+        } else {
+            basket = basketOptional.get();
+        }
+
+        BasketItem basketItem = new BasketItem();
+        basketItem.setBasket(basket);
+        basketItem.setProduct(product);
+        basketItem.setQuantity(1);
+
+        basketItemRepository.save(basketItem);
+
+        return "redirect:/api/basket/view";
+    }
+
+    @PostMapping("/remove/{itemId}")
+    public String removeFromBasket(@PathVariable Long itemId, Model model) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
+
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            model.addAttribute("error", "User not found");
+            return "error";
+        }
+
+        User user = userOptional.get();
+        Optional<BasketItem> basketItemOptional = basketItemRepository.findById(itemId);
 
         if (basketItemOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            model.addAttribute("error", "Item not found in the basket");
+            return "error";
         }
 
         BasketItem basketItem = basketItemOptional.get();
-        basketItem.setQuantity(request.getQuantity());
-        basketItemRepository.save(basketItem);
 
-        return ResponseEntity.ok(basketItem);
+        if (!basketItem.getBasket().getUser().getId().equals(user.getId())) {
+            model.addAttribute("error", "You are not authorized to remove this item");
+            return "error";
+        }
+
+        basketItemRepository.delete(basketItem);
+        model.addAttribute("success", "Item removed from basket");
+
+        return "redirect:/api/basket/view";
     }
 
-    @DeleteMapping("/{userId}/clear")
-    public ResponseEntity<Void> clearBasket(@PathVariable Long userId) {
-        Optional<Basket> basket = basketRepository.findByUserId(userId);
 
-        if (basket.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        basketItemRepository.deleteAll(basket.get().getItems());
-        return ResponseEntity.noContent().build();
-    }
-
-    public static class BasketItemRequest {
-        private Long productId;
-        private Integer quantity;
-
-        public Long getProductId() {
-            return productId;
-        }
-
-        public void setProductId(Long productId) {
-            this.productId = productId;
-        }
-
-        public Integer getQuantity() {
-            return quantity;
-        }
-
-        public void setQuantity(Integer quantity) {
-            this.quantity = quantity;
-        }
-    }
 }

@@ -11,8 +11,6 @@ import com.makers.marketplace.model.User;
 import com.makers.marketplace.repository.UserRepository;
 import com.makers.marketplace.service.ProductService;
 
-import java.sql.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller

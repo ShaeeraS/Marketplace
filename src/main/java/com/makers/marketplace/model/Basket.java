@@ -4,28 +4,28 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "baskets")
 public class Basket {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @OneToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
+    // One basket can have many basket items
     @OneToMany(mappedBy = "basket", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BasketItem> items;
 
-    @Column(nullable = false)
-    private java.sql.Timestamp createdAt = new java.sql.Timestamp(System.currentTimeMillis());
-
-    public Basket() {}
+    public Basket() {
+    }
 
     public Basket(User user) {
         this.user = user;
     }
 
+    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -48,13 +48,5 @@ public class Basket {
 
     public void setItems(List<BasketItem> items) {
         this.items = items;
-    }
-
-    public java.sql.Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(java.sql.Timestamp createdAt) {
-        this.createdAt = createdAt;
     }
 }

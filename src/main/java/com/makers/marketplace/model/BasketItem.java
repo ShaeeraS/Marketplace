@@ -5,24 +5,23 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "basket_items")
 public class BasketItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "basket_id", nullable = false)
     private Basket basket;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     @Column(nullable = false)
     private Integer quantity;
 
-    @Column(nullable = false)
-    private java.sql.Timestamp createdAt = new java.sql.Timestamp(System.currentTimeMillis());
-
+    // Constructors
     public BasketItem() {}
 
     public BasketItem(Basket basket, Product product, Integer quantity) {
@@ -31,6 +30,7 @@ public class BasketItem {
         this.quantity = quantity;
     }
 
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -55,20 +55,11 @@ public class BasketItem {
         this.product = product;
     }
 
-
     public Integer getQuantity() {
         return quantity;
     }
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
-    }
-
-    public java.sql.Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(java.sql.Timestamp createdAt) {
-        this.createdAt = createdAt;
     }
 }
