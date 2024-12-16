@@ -1,9 +1,9 @@
 package com.makers.marketplace.model;
 
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name = "baskets")
 public class Basket {
 
     @Id
@@ -11,16 +11,21 @@ public class Basket {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    public Basket() {}
+    // One basket can have many basket items
+    @OneToMany(mappedBy = "basket", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BasketItem> items;
+
+    public Basket() {
+    }
 
     public Basket(User user) {
         this.user = user;
     }
 
-    // Getters and Setters
+    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -35,5 +40,13 @@ public class Basket {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<BasketItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<BasketItem> items) {
+        this.items = items;
     }
 }

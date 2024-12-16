@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layouts/main :: head}">
+    <title>Your Basket</title>
+</head>
+<body>
+    <div th:if="${success}" class="alert alert-success" role="alert">
+        <span th:text="${success}"></span>
+    </div>
+    
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+        <span th:text="${error}"></span>
+    </div>
+
+    <div th:fragment="content">
+        <div class="card">
+            <h1 style="margin-top: 0;">Your Basket</h1>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${basketItems}">
+                            <td th:text="${item.product.id}"></td>
+                            <td th:text="${item.product.name}"></td>
+                            <td th:text="${#numbers.formatCurrency(item.product.price)}"></td>
+                            <td th:text="${item.quantity}"></td>
+                            <td>
+                                <!-- Remove from Basket Form -->
+                                <form th:action="@{/api/basket/remove/{itemId}(itemId=${item.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger">
+                                        Remove from Basket
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
