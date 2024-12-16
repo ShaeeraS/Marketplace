@@ -49,8 +49,10 @@
                             <td th:text="${product.user.username}"></td>
                             <td>
                                 <!-- Add to Basket Form -->
-                                <form th:action="@{/basket/add}" method="post" style="display:inline;">
+                                <form th:action="@{/api/basket/add}" method="post" style="display:inline;">
                                     <input type="hidden" name="productId" th:value="${product.id}" />
+                                    <!-- Pass userId dynamically if needed -->
+                                    <input type="hidden" name="userId" th:value="${userId}" /> <!-- Ensure userId is available in the model -->
                                     <button type="submit"
                                             class="btn btn-primary"
                                             th:if="${#authentication.name != product.user.username}">
