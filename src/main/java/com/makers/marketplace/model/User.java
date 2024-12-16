@@ -1,11 +1,11 @@
 package com.makers.marketplace.model;
 
 import jakarta.persistence.*;
-import java.io.Serializable;
 
 @Entity
 @Table(name = "users")
-public class User implements Serializable {
+public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,7 +19,8 @@ public class User implements Serializable {
     @Column(nullable = false)
     private String email;
 
-    private String roles;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Basket basket;
 
     // Constructors
     public User() {}
@@ -63,11 +64,19 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public String getRoles() {
-        return roles;
+    public Basket getBasket() {
+        return basket;
     }
 
-    public void setRoles(String roles) {
-        this.roles = roles;
+    public void setBasket(Basket basket) {
+        this.basket = basket;
+    }
+
+    // This method will be called after the user is saved to the database
+    @PostPersist
+    public void createBasket() {
+        if (this.basket == null) {
+            this.basket = new Basket(this); // Create a basket for the user
+        }
     }
 }

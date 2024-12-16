@@ -23,9 +23,6 @@ public class UserService {
     
         // Encode the password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        
-        // Set default role (without ROLE_ prefix)
-        user.setRoles("USER");  // Changed from "ROLE_USER"
     
         return userRepository.save(user);
     }
