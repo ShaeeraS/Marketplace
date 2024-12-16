@@ -6,6 +6,7 @@ import com.makers.marketplace.model.Product;
 import com.makers.marketplace.repository.ProductRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -36,8 +37,14 @@ public class ProductService {
     public void deleteProductById(Long productId) {
         productRepository.deleteById(productId);
     }
+
     public boolean existsById(Long productId) {
         return productRepository.existsById(productId);
+    }
+
+    //Edit products:
+    public Product updateProduct(Product product) {
+        return productRepository.save(product);
     }
 
 }

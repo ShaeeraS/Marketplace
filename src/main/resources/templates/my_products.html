@@ -45,6 +45,9 @@
             Delete
           </button>
         </form>
+        <form th:action="@{/products/edit/{id}(id=${product.id})}" method="get" style="display: inline;">
+          <button type="submit" class="edit-button">Edit</button>
+        </form>
       </td>
 
     </tr>
