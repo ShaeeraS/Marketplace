@@ -10,6 +10,7 @@ import com.makers.marketplace.model.Product;
 import com.makers.marketplace.model.User;
 import com.makers.marketplace.repository.UserRepository;
 import com.makers.marketplace.service.ProductService;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Array;
 import java.util.ArrayList;
@@ -74,28 +75,35 @@ public class ProductController {
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteProduct(@PathVariable Long id, Model model) {
+    public String deleteProduct(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        // Retrieve the current authenticated user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
+        // Fetch the User entity based on username
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // Fetch the product to be deleted
         Product product = productService.findById(id);
         if (product == null) {
-            model.addAttribute("errorMessage", "Product not found.");
-            return "redirect:/products/my?error=ProductNotFound";
+            // Handle the case where the product does not exist
+            redirectAttributes.addFlashAttribute("errorMessage", "Product not found.");
+            return "redirect:/products/my";
         }
 
+        // Verify that the product belongs to the authenticated user
         if (!product.getUser().getId().equals(user.getId())) {
             // Handle unauthorized deletion attempt
-            model.addAttribute("errorMessage", "You are not authorized to delete this product.");
-            return "redirect:/products/my?error=Unauthorized";
+            redirectAttributes.addFlashAttribute("errorMessage", "You are not authorized to delete this product.");
+            return "redirect:/products/my";
         }
 
+        // Perform deletion
         productService.deleteProductById(id);
+        redirectAttributes.addFlashAttribute("successMessage", "Product deleted successfully.");
 
-        return "redirect:/products/my?success=ProductDeleted";
+        return "redirect:/products/my";
     }
 
 
