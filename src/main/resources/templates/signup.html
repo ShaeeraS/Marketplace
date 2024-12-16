@@ -1,27 +1,36 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:replace="~{layouts/main :: head}">
     <title>Sign Up</title>
 </head>
 <body>
-    <h2>Sign Up</h2>
-    <form th:action="@{/signup}" th:object="${user}" method="post">
-        <div>
-            <label>Username:</label>
-            <input type="text" th:field="*{username}" required>
+    <div th:fragment="content">
+        <div class="card" style="max-width: 400px; margin: 2rem auto;">
+            <h2 style="margin-top: 0; text-align: center;">Sign Up</h2>
+            
+            <form th:action="@{/signup}" th:object="${user}" method="post">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" th:field="*{username}" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" th:field="*{email}" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" th:field="*{password}" class="form-input" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Sign Up</button>
+            </form>
+            
+            <p style="text-align: center; margin-top: 1rem;">
+                <a th:href="@{/login}" class="link">Already have an account?</a>
+            </p>
         </div>
-        <div>
-            <label>Password:</label>
-            <input type="password" th:field="*{password}" required>
-        </div>
-        <div>
-            <label>Email:</label>
-            <input type="email" th:field="*{email}" required>
-        </div>
-        <button type="submit">Sign Up</button>
-    </form>
-    <p>
-        <a th:href="@{/login}">Already have an account?</a>
-    </p>
+    </div>
 </body>
 </html>
