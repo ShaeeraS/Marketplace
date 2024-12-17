@@ -53,6 +53,7 @@ public class BasketController {
         } else {
             Basket basket = basketOptional.get();
             List<BasketItem> basketItems = basketItemRepository.findByBasketId(basket.getId());
+            basketItems.sort(Comparator.comparing(BasketItem::getId));
             model.addAttribute("basketItems", basketItems);
         }
 
