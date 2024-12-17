@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -128,6 +129,49 @@ public class BasketController {
 
         return "redirect:/api/basket/view";
     }
+
+    @PostMapping("/updateQuantity")
+public String updateQuantity(@RequestParam("basketItemId") Long basketItemId,
+                             @RequestParam("quantity") int quantity,
+                             Model model) {
+    // Get current authenticated user
+    UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    String username = userDetails.getUsername();
+
+    Optional<User> userOptional = userRepository.findByUsername(username);
+    if (userOptional.isEmpty()) {
+        model.addAttribute("error", "User not found");
+        return "error"; // Render an error page if user is not found
+    }
+
+    User user = userOptional.get();
+    Optional<BasketItem> basketItemOptional = basketItemRepository.findById(basketItemId);
+    if (basketItemOptional.isEmpty()) {
+        model.addAttribute("error", "Basket item not found");
+        return "error";
+    }
+
+    BasketItem basketItem = basketItemOptional.get();
+    if (!basketItem.getBasket().getUser().getId().equals(user.getId())) {
+        model.addAttribute("error", "Unauthorized update");
+        return "error"; // Unauthorized update
+    }
+
+    // Update the quantity of the basket item
+    basketItem.setQuantity(quantity);
+    basketItemRepository.save(basketItem);
+
+    // Fetch updated basket items and sort by ID
+    List<BasketItem> basketItems = basketItemRepository.findByBasket_UserId(user.getId());
+    basketItems.sort(Comparator.comparing(BasketItem::getId));
+
+    // Add sorted items to the model
+    model.addAttribute("basketItems", basketItems);
+
+    return "basket"; // Re-render the basket view
+}
+
+
 
 
 }

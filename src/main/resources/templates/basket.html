@@ -28,23 +28,30 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <!-- Basket items are already sorted server-side -->
                         <tr th:each="item : ${basketItems}">
-                            <td th:text="${item.product.id}"></td>
+                            <td th:text="${item.id}"></td>
                             <td th:text="${item.product.name}"></td>
-                            <td th:text="${#numbers.formatCurrency(item.product.price)}"></td>
-                            <td th:text="${item.quantity}"></td>
+                            <td th:text="${#numbers.formatCurrency(item.product.price * item.quantity)}"></td>
                             <td>
-                                <!-- Remove from Basket Form -->
+                                <form th:action="@{/api/basket/updateQuantity}" method="post" style="display: flex; align-items: center;">
+                                    <input type="hidden" name="basketItemId" th:value="${item.id}" />
+                                    <input type="number" name="quantity" th:value="${item.quantity}" min="1" />
+                                    <button type="submit" class="btn btn-primary" style="margin-left: 10px;">Update</button>
+                                </form>
+                            </td>
+                            <td>
                                 <form th:action="@{/api/basket/remove/{itemId}(itemId=${item.id})}" method="post" style="display:inline;">
-                                    <button type="submit" class="btn btn-danger">
-                                        Remove from Basket
-                                    </button>
+                                    <button type="submit" class="btn btn-danger">Remove</button>
                                 </form>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+            <form th:action="@{/api/basket/update}" method="post">
+                <input type="submit" value="Update Basket" class="btn btn-primary" />
+            </form>
         </div>
     </div>
 </body>
