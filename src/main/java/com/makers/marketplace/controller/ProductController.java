@@ -78,11 +78,9 @@ public class ProductController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        // Fetch the User entity based on username
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Fetch the product to be deleted
         Product product = productService.findById(id);
         if (product == null) {
             // Handle the case where the product does not exist
@@ -90,18 +88,67 @@ public class ProductController {
             return "redirect:/products/my";
         }
 
-        // Verify that the product belongs to the authenticated user
         if (!product.getUser().getId().equals(user.getId())) {
             // Handle unauthorized deletion attempt
             redirectAttributes.addFlashAttribute("errorMessage", "You are not authorized to delete this product.");
             return "redirect:/products/my";
         }
 
-        // Perform deletion
         productService.deleteProductById(id);
         redirectAttributes.addFlashAttribute("successMessage", "Product deleted successfully.");
 
         return "redirect:/products/my";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String showEditProductForm(@PathVariable Long id, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Product product = productService.findById(id);
+        if (product == null) {
+            return "redirect:/products/my?error=ProductNotFound";
+        }
+
+        if (!product.getUser().getId().equals(user.getId())) {
+            return "redirect:/products/my?error=Unauthorized";
+        }
+
+        model.addAttribute("product", product);
+        return "edit_product";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String editProduct(@PathVariable Long id,
+                              @ModelAttribute("product") Product updatedProduct,
+                              Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Product existingProduct = productService.findById(id);
+        if (existingProduct == null) {
+            return "redirect:/products/my?error=ProductNotFound";
+        }
+
+        if (!existingProduct.getUser().getId().equals(user.getId())) {
+            return "redirect:/products/my?error=Unauthorized";
+        }
+
+        existingProduct.setName(updatedProduct.getName());
+        existingProduct.setDescription(updatedProduct.getDescription());
+        existingProduct.setPrice(updatedProduct.getPrice());
+        existingProduct.setCategory(updatedProduct.getCategory());
+        existingProduct.setImagePath(updatedProduct.getImagePath());
+
+        productService.updateProduct(existingProduct);
+
+        return "redirect:/products/my?success=ProductUpdated";
     }
 
 
