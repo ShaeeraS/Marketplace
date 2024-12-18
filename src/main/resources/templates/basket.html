@@ -20,7 +20,6 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Name</th>
                             <th>Price</th>
                             <th>Quantity</th>
@@ -29,14 +28,13 @@
                     </thead>
                     <tbody>
                     <tr th:each="item : ${basketItems}">
-                        <td th:text="${item.product.id}"></td>
                         <td th:text="${item.product.name}"></td>
                         <td th:text="${#numbers.formatCurrency(item.product.price * item.quantity)}"></td>
                         <td>
                             <form th:action="@{/api/basket/updateQuantity/{itemId}(itemId=${item.id})}" method="post">
                                 <input type="number" name="quantity" th:value="${item.quantity}" min="1"
                                        th:attr="max=${item.product.quantityAvailable}" required/>
-                                <button type="submit">Update</button>
+                                <button type="submit" class="btn btn-primary" style="margin-left: 10px;">Update</button>
                             </form>
                         </td>
                         <td>

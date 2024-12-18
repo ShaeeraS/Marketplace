@@ -51,8 +51,10 @@ public class BasketController {
             model.addAttribute("basketItems", List.of());
         } else {
             Basket basket = basketOptional.get();
-            List<BasketItem> basketItems = basketItemRepository.findByBasketId(basket.getId());
+            List<BasketItem> basketItems = basketItemRepository.findByBasketIdOrderByIdAsc(basket.getId());
             model.addAttribute("basketItems", basketItems);
+
+
         }
 
         return "basket";
