@@ -3,73 +3,69 @@
 <head th:replace="~{layouts/main :: head}">
     <title>All Products</title>
 </head>
-<body>
-    <div th:if="${success}" class="alert alert-success" role="alert">
-        <span th:text="${success}"></span>
-    </div>
-    
-    <div th:if="${error}" class="alert alert-danger" role="alert">
-        <span th:text="${error}"></span>
-    </div>
-    
-    <div th:fragment="content">
-        <div class="card">
-            <h1 style="margin-top: 0;">All Products</h1>
 
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Price</th>
-                            <th>Image</th>
-                            <th>Owner</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="product : ${products}">
-                            <td th:text="${product.id}"></td>
-                            <td>
-                                <a th:href="@{/products/{id}(id=${product.id})}" th:text="${product.name}"></a>
-                            </td>
-                            <td th:text="${product.description}"></td>
-                            <td th:text="${#numbers.formatCurrency(product.price)}"></td>
-                            <td>
-                                <img th:if="${product.imagePath != null}"
-                                     th:src="@{${product.imagePath}}"
-                                     alt="Product Image"
-                                     style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
-                                <span th:if="${product.imagePath == null}" style="color: #666;">
-                                    No image
-                                </span>
-                            </td>
-                            <td th:text="${product.user.username}"></td>
-                            <td>
-                                <!-- Add to Basket Form -->
-                                <form th:action="@{/api/basket/add}" method="post" style="display:inline;">
-                                    <input type="hidden" name="productId" th:value="${product.id}" />
-                                    <!-- Pass userId dynamically if needed -->
-                                    <input type="hidden" name="userId" th:value="${userId}" /> <!-- Ensure userId is available in the model -->
-                                    <button type="submit"
-                                            class="btn btn-primary"
-                                            th:if="${#authentication.name != product.user.username}">
-                                        Add to Basket
-                                    </button>
-                                    <button type="button"
-                                            class="btn btn-secondary" disabled
-                                            th:if="${#authentication.name == product.user.username}">
-                                        Owned
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+<body>
+<h1>All Products</h1>
+
+<!-- Success Message -->
+<div th:if="${success}" class="alert alert-success" role="alert">
+    <span th:text="${success}"></span>
+</div>
+
+<!-- Error Message -->
+<div th:if="${error}" class="alert alert-danger" role="alert">
+    <span th:text="${error}"></span>
+</div>
+
+<div th:fragment="content">
+    <div class="card">
+        <!-- Page Title -->
+        <h1 style="margin-top: 0;">All Products</h1>
+
+        <div th:each="product : ${products}"
+             style="margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+
+            <!-- Product Name with Link -->
+            <p>
+                <a th:href="@{/products/{id}(id=${product.id})}" th:text="${product.name}"></a>
+            </p>
+
+            <!-- Product Image -->
+            <img th:if="${product.imagePath}" th:src="@{${product.imagePath}}" alt="Product Image" />
+            <img th:unless="${product.imagePath}" th:src="@{/images/default.png}" alt="Default Image" />
+
+            <!-- Product Price -->
+            <p><span th:text="${#numbers.formatCurrency(product.price)}"></span></p>
+
+            <!-- Product Description -->
+            <p><strong>Description:</strong> <span th:text="${product.description}"></span></p>
+
+            <!-- Product Owner -->
+            <p><strong>Owner:</strong> <span th:text="${product.user.username}"></span></p>
+
+            <!-- Add to Basket Form -->
+            <form th:action="@{/api/basket/add}" method="post">
+                <!-- Hidden Fields for Product and User IDs -->
+                <input type="hidden" name="productId" th:value="${product.id}" />
+                <input type="hidden" name="userId" th:value="${userId}" />
+
+                <!-- Quantity Selection -->
+                <label for="quantity">Quantity:</label>
+                <input type="number" name="quantity" id="quantity" min="1" value="1"
+                       th:attr="max=${product.quantityAvailable}" required/>
+
+                <!-- Conditional Submit Button -->
+                <button type="submit" th:if="${#authentication.name != product.user.username}">
+                    Add to Basket
+                </button>
+
+                <!-- Disabled Button if User Owns the Product -->
+                <button type="button" disabled th:if="${#authentication.name == product.user.username}">
+                    Owned
+                </button>
+            </form>
         </div>
     </div>
+</div>
 </body>
 </html>
