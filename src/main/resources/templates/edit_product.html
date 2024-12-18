@@ -1,52 +1,77 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:replace="~{layouts/main :: head}">
     <title>Edit Product</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 
 <body>
 
-    <h2 th:text="'Edit Product - ' + ${product.name}">Edit Product</h2>
+<h2 th:text="'Edit Product - ' + ${product.name}">Edit Product</h2>
 
-    <!-- Success and Error Messages -->
-    <div th:if="${param.success}" style="color: green;">
-        Product updated successfully.
-    </div>
-    <div th:if="${param.error}" style="color: red;">
-        <span th:if="${param.error == 'ProductNotFound'}">Product not found.</span>
-        <span th:if="${param.error == 'Unauthorized'}">You are not authorized to edit this product.</span>
-    </div>
+<!-- Success Message -->
+<div th:if="${param.success}" style="color: green;">
+    Product updated successfully.
+</div>
 
-    <div class="edit-form">
-        <form th:action="@{/products/edit/{id}(id=${product.id})}" th:object="${product}" method="post" enctype="multipart/form-data">
-            <div>
-                <label for="name">Name:</label>
-                <input type="text" id="name" th:field="*{name}" required />
+<!-- Error Messages -->
+<div th:if="${param.error}" style="color: red;">
+    <span th:if="${param.error == 'ProductNotFound'}">Product not found.</span>
+    <span th:if="${param.error == 'Unauthorized'}">You are not authorized to edit this product.</span>
+</div>
+
+<div class="edit-form">
+    <form th:action="@{/products/edit/{id}(id=${product.id})}"
+          th:object="${product}"
+          method="post"
+          enctype="multipart/form-data">
+
+        <!-- Product Name -->
+        <div>
+            <label for="name">Name:</label>
+            <input type="text" id="name" th:field="*{name}" required />
+        </div>
+
+        <!-- Product Description -->
+        <div>
+            <label for="description">Description:</label>
+            <textarea id="description" th:field="*{description}" required></textarea>
+        </div>
+
+        <!-- Product Price -->
+        <div>
+            <label for="price">Price:</label>
+            <input type="number" id="price" th:field="*{price}" step="0.01" required />
+        </div>
+
+        <!-- Product Category -->
+        <div>
+            <label for="category">Category:</label>
+            <input type="text" id="category" th:field="*{category}" required />
+        </div>
+
+        <!-- Product Image Upload -->
+        <div>
+            <label for="imagePath">Product Image:</label>
+            <input type="file" id="imagePath" name="image" accept="image/*" />
+            <!-- Display Current Product Image if Available -->
+            <div th:if="${product.imagePath}">
+                <p>Current Image:</p>
+                <img th:src="@{${product.imagePath}}" alt="Product Image" width="200"/>
             </div>
-            <div>
-                <label for="description">Description:</label>
-                <textarea id="description" th:field="*{description}" required></textarea>
-            </div>
-            <div>
-                <label for="price">Price:</label>
-                <input type="number" id="price" th:field="*{price}" step="0.01" required />
-            </div>
-            <div>
-                <label for="category">Category:</label>
-                <input type="text" id="category" th:field="*{category}" required />
-            </div>
-            <div>
-                <label for="imagePath">Product Image:</label>
-                <input type="file" id="imagePath" name="image" accept="image/*" />
-                <div th:if="${product.imagePath}">
-                    <p>Current Image:</p>
-                    <img th:src="@{${product.imagePath}}" alt="Product Image" width="200"/>
-                </div>
-            </div>
-            <button type="submit">Update Product</button>
-        </form>
-    </div>
-    <a href="/products/my">Back to My Products</a>
+        </div>
+
+        <!-- Quantity Available -->
+        <div>
+            <label>Quantity Available:</label>
+            <input type="number" th:field="*{quantityAvailable}" min="1" required/>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit">Update Product</button>
+    </form>
+</div>
+
+<a href="/products/my">Back to My Products</a>
 </body>
 </html>

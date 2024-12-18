@@ -58,8 +58,10 @@ public class BasketController {
         return "basket";
     }
 
-        @PostMapping("/add")
-    public String addToBasket(@RequestParam("productId") Long productId, Model model) {
+    @PostMapping("/add")
+    public String addToBasket(@RequestParam("productId") Long productId,
+                              @RequestParam("quantity") Integer quantity,
+                              Model model) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = userDetails.getUsername();
 
@@ -77,6 +79,13 @@ public class BasketController {
         }
 
         Product product = productOptional.get();
+
+        // Check if requested quantity is <= product quantityAvailable
+        if (quantity > product.getQuantityAvailable()) {
+            model.addAttribute("error", "Requested quantity exceeds available stock");
+            return "error";
+        }
+
         Optional<Basket> basketOptional = basketRepository.findByUserId(user.getId());
         Basket basket;
         if (basketOptional.isEmpty()) {
@@ -90,12 +99,13 @@ public class BasketController {
         BasketItem basketItem = new BasketItem();
         basketItem.setBasket(basket);
         basketItem.setProduct(product);
-        basketItem.setQuantity(1);
+        basketItem.setQuantity(quantity);
 
         basketItemRepository.save(basketItem);
 
         return "redirect:/api/basket/view";
     }
+
 
     @PostMapping("/remove/{itemId}")
     public String removeFromBasket(@PathVariable Long itemId, Model model) {
@@ -129,5 +139,45 @@ public class BasketController {
         return "redirect:/api/basket/view";
     }
 
+    @PostMapping("/updateQuantity/{itemId}")
+    public String updateBasketItemQuantity(@PathVariable Long itemId,
+                                           @RequestParam("quantity") Integer newQuantity,
+                                           Model model) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
+
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            model.addAttribute("error", "User not found");
+            return "error";
+        }
+
+        User user = userOptional.get();
+
+        Optional<BasketItem> basketItemOptional = basketItemRepository.findById(itemId);
+        if (basketItemOptional.isEmpty()) {
+            model.addAttribute("error", "Basket item not found");
+            return "error";
+        }
+
+        BasketItem basketItem = basketItemOptional.get();
+
+        // Check user ownership
+        if (!basketItem.getBasket().getUser().getId().equals(user.getId())) {
+            model.addAttribute("error", "You are not authorized to modify this item");
+            return "error";
+        }
+
+        Product product = basketItem.getProduct();
+        if (newQuantity > product.getQuantityAvailable()) {
+            model.addAttribute("error", "Requested quantity exceeds available stock");
+            return "error";
+        }
+
+        basketItem.setQuantity(newQuantity);
+        basketItemRepository.save(basketItem);
+
+        return "redirect:/api/basket/view";
+    }
 
 }

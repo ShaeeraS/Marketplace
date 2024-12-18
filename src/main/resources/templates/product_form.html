@@ -34,6 +34,11 @@
                     <input type="file" name="image" class="form-input">
                 </div>
 
+                <div>
+                    <label>Quantity Available:</label>
+                    <input type="number" th:field="*{quantityAvailable}" min="1" required/>
+                </div>
+
                 <button type="submit" class="btn btn-primary">Submit Product</button>
             </form>
         </div>
