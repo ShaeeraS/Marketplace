@@ -53,6 +53,9 @@
                                     <input type="hidden" name="productId" th:value="${product.id}" />
                                     <!-- Pass userId dynamically if needed -->
                                     <input type="hidden" name="userId" th:value="${userId}" /> <!-- Ensure userId is available in the model -->
+                                    <label for="quantity">Quantity:</label>
+                                    <input type="number" name="quantity" id="quantity" min="1"
+                                           th:attr="max=${product.quantityAvailable}" required/>
                                     <button type="submit"
                                             class="btn btn-primary"
                                             th:if="${#authentication.name != product.user.username}">

@@ -28,21 +28,25 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="item : ${basketItems}">
-                            <td th:text="${item.product.id}"></td>
-                            <td th:text="${item.product.name}"></td>
-                            <td th:text="${#numbers.formatCurrency(item.product.price)}"></td>
-                            <td th:text="${item.quantity}"></td>
-                            <td>
-                                <!-- Remove from Basket Form -->
-                                <form th:action="@{/api/basket/remove/{itemId}(itemId=${item.id})}" method="post" style="display:inline;">
-                                    <button type="submit" class="btn btn-danger">
-                                        Remove from Basket
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
+                    <tr th:each="item : ${basketItems}">
+                        <td th:text="${item.product.id}"></td>
+                        <td th:text="${item.product.name}"></td>
+                        <td th:text="${#numbers.formatCurrency(item.product.price * item.quantity)}"></td>
+                        <td>
+                            <form th:action="@{/api/basket/updateQuantity/{itemId}(itemId=${item.id})}" method="post">
+                                <input type="number" name="quantity" th:value="${item.quantity}" min="1"
+                                       th:attr="max=${item.product.quantityAvailable}" required/>
+                                <button type="submit">Update</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form th:action="@{/api/basket/remove/{itemId}(itemId=${item.id})}" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-danger">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
                     </tbody>
+
                 </table>
             </div>
         </div>

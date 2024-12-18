@@ -24,9 +24,9 @@ public class Product {
     @Column(nullable = false)
     private String category;
 
-    @NotNull(message = "Quantity is required")
     @Min(value = 0, message = "Quantity must be at least 0")
-    private Integer quantity;
+    @Column(nullable = false)
+    private Integer quantityAvailable;
 
     private String imagePath;
 
@@ -54,6 +54,9 @@ public class Product {
 
     public String getImagePath() { return imagePath; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
+
+    public Integer getQuantityAvailable() { return quantityAvailable; }
+    public void setQuantityAvailable(Integer quantityAvailable) { this.quantityAvailable = quantityAvailable; }
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }

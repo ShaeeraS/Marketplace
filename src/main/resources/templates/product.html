@@ -32,6 +32,14 @@
     <p class="form-input" th:text="${product.user.username}"></p>
 </div>
 
-<a href="/dashboard" class="link btn">Back to dashboard</a>
+<form th:action="@{/api/basket/add}" method="post">
+    <input type="hidden" name="productId" th:value="${product.id}" />
+    <label for="quantity">Quantity:</label>
+    <input type="number" name="quantity" id="quantity" min="1"
+           th:attr="max=${product.quantityAvailable}" required/>
+    <button type="submit">Add to Basket</button>
+</form>
+
+<a href="/products/all" class="link btn">Back to All Products</a>
 </body>
 </html>

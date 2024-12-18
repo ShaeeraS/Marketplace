@@ -145,6 +145,8 @@ public class ProductController {
         existingProduct.setPrice(updatedProduct.getPrice());
         existingProduct.setCategory(updatedProduct.getCategory());
         existingProduct.setImagePath(updatedProduct.getImagePath());
+        existingProduct.setQuantityAvailable(updatedProduct.getQuantityAvailable());
+
 
         productService.updateProduct(existingProduct);
 
