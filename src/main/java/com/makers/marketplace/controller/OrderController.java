@@ -40,7 +40,6 @@ public class OrderController {
         }
         Order order = orderOptional.get();
         model.addAttribute("order", order);
-        model.addAttribute("groupedOrderItems", order.getGroupedOrderItems());
         return "thanks";
     }
 

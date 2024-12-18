@@ -8,43 +8,43 @@
 </head>
 
 <body>
-    <!-- Alert Messages -->
-    <div th:if="${success}" class="alert alert-success">
-        <span th:text="${success}">Operation completed successfully!</span>
-    </div>
-    
-    <div th:if="${error}" class="alert alert-error">
-        <span th:text="${error}">An error occurred. Please try again.</span>
-    </div>
+<!-- Alert Messages -->
+<div th:if="${success}" class="alert alert-success">
+    <span th:text="${success}">Operation completed successfully!</span>
+</div>
 
-    <div class="container">
-        <!-- Header -->
-        <header>
-            <h1>All Products</h1>
-        </header>
+<div th:if="${error}" class="alert alert-error">
+    <span th:text="${error}">An error occurred. Please try again.</span>
+</div>
 
-        <!-- Product Grid -->
-        <div class="product-grid">
-            <!-- Product Card -->
-            <article th:each="product : ${products}" class="product-card">
-                <div class="product-image" th:classappend="${product.imagePath == null} ? 'no-image' : ''">
-                    <img th:if="${product.imagePath != null}" 
-                         th:src="@{${product.imagePath}}" 
-                         th:alt="${product.name}">
-                    <svg th:unless="${product.imagePath != null}" 
-                         width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                    </svg>
+<div class="container">
+    <!-- Header -->
+    <header>
+        <h1>All Products</h1>
+    </header>
+
+    <!-- Product Grid -->
+    <div class="product-grid">
+        <!-- Product Card -->
+        <article th:each="product : ${products}" class="product-card">
+            <div class="product-image" th:classappend="${product.imagePath == null} ? 'no-image' : ''">
+                <img th:if="${product.imagePath != null}"
+                     th:src="@{${product.imagePath}}"
+                     th:alt="${product.name}">
+                <svg th:unless="${product.imagePath != null}"
+                     width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                </svg>
+            </div>
+            <div class="product-info">
+                <div class="product-header">
+                    <h2>
+                        <a th:href="@{/products/{id}(id=${product.id})}" th:text="${product.name}">Product Name</a>
+                    </h2>
+                    <span class="price" th:text="${#numbers.formatCurrency(product.price)}">$99.99</span>
                 </div>
-                <div class="product-info">
-                    <div class="product-header">
-                        <h2>
-                            <a th:href="@{/products/{id}(id=${product.id})}" th:text="${product.name}">Product Name</a>
-                        </h2>
-                        <span class="price" th:text="${#numbers.formatCurrency(product.price)}">$99.99</span>
-                    </div>
-                    <p class="description" th:text="${product.description}">Product description goes here.</p>
-                    <div class="product-footer">
+                <p class="description" th:text="${product.description}">Product description goes here.</p>
+                <div class="product-footer">
                         <span class="owner">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -52,32 +52,34 @@
                             </svg>
                             <span th:text="${product.user.username}">john_doe</span>
                         </span>
-                        
-                        <!-- Add to Cart/Owned Button -->
-                        <form th:action="@{/api/basket/add}" method="post" style="display:inline;">
-                            <input type="hidden" name="productId" th:value="${product.id}" />
-                            <input type="hidden" name="userId" th:value="${userId}" />
-                            
-                            <button type="submit" class="btn-add-cart" 
-                                    th:if="${#authentication.name != product.user.username}">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="9" cy="21" r="1"/>
-                                    <circle cx="20" cy="21" r="1"/>
-                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                                </svg>
-                                Add to Cart
-                            </button>
-                            
-                            <button type="button" class="btn-owned" disabled
-                                    th:if="${#authentication.name == product.user.username}">
-                                Owned
-                            </button>
-                        </form>
-                    </div>
+
+                    <!-- Add to Cart/Owned Button -->
+                    <form th:action="@{/api/basket/add}" method="post" style="display:inline;">
+                        <input type="hidden" name="productId" th:value="${product.id}" />
+                        <input type="hidden" name="userId" th:value="${userId}" />
+
+                        <input type="number" name="quantity" min="1" value="1" class="quantity-input" />
+
+                        <button type="submit" class="btn-add-cart"
+                                th:if="${#authentication.name != product.user.username}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="9" cy="21" r="1"/>
+                                <circle cx="20" cy="21" r="1"/>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                            </svg>
+                            Add to Cart
+                        </button>
+
+                        <button type="button" class="btn-owned" disabled
+                                th:if="${#authentication.name == product.user.username}">
+                            Owned
+                        </button>
+                    </form>
                 </div>
-            </article>
-        </div>
+            </div>
+        </article>
     </div>
+</div>
 </div>
 </body>
 </html>

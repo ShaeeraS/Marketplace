@@ -1,5 +1,8 @@
 package com.makers.marketplace.model;
 
+import com.makers.marketplace.model.Order;
+import com.makers.marketplace.model.Product;
+import com.makers.marketplace.model.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +12,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "order_items")
 public class OrderItem {
-    // Getters and Setters
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
