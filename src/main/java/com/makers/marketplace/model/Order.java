@@ -1,9 +1,8 @@
 package com.makers.marketplace.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 
 import java.util.List;
 import java.util.Map;
@@ -42,7 +41,7 @@ public class Order {
     }
 
 
-    public Map<Product, Integer> getGroupedOrderItems() {
+    public Map<Product, Integer> getGroupedOrdertems() {
         return orderItems.stream()
                 .collect(Collectors.groupingBy(OrderItem::getProduct, Collectors.summingInt(OrderItem::getQuantity)));
     }
