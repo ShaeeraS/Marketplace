@@ -125,4 +125,20 @@ public class OrderController {
         orderRepository.save(order);
         return "redirect:/api/orders/to-fulfill";
     }
+
+    @GetMapping("/orders")
+    public String viewOrders(Model model) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
+
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            model.addAttribute("error", "User not found");
+            return "error";
+        }
+
+        List<Order> orders = orderRepository.findByUserId(user.getId());
+        model.addAttribute("orders", orders);
+        return "orders";
+    }
 }
