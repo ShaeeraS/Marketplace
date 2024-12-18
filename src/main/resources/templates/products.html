@@ -54,7 +54,7 @@
                                     <!-- Pass userId dynamically if needed -->
                                     <input type="hidden" name="userId" th:value="${userId}" /> <!-- Ensure userId is available in the model -->
                                     <label for="quantity">Quantity:</label>
-                                    <input type="number" name="quantity" id="quantity" min="1"
+                                    <input type="number" name="quantity" id="quantity" min="1" value="1"
                                            th:attr="max=${product.quantityAvailable}" required/>
                                     <button type="submit"
                                             class="btn btn-primary"

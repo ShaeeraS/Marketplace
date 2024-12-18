@@ -26,7 +26,7 @@ public class Product {
 
     @Min(value = 0, message = "Quantity must be at least 0")
     @Column(nullable = false)
-    private Integer quantityAvailable;
+    private Integer quantityAvailable = 1;
 
     private String imagePath;
 

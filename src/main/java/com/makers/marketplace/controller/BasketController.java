@@ -168,7 +168,6 @@ public class BasketController {
             return "error";
         }
 
-        // Check new quantity against product availability
         Product product = basketItem.getProduct();
         if (newQuantity > product.getQuantityAvailable()) {
             model.addAttribute("error", "Requested quantity exceeds available stock");
