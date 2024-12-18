@@ -67,7 +67,7 @@ public class OrderController {
         List<Order> ordersToFulfill = orderRepository.findAll().stream()
                 .filter(order -> order.getOrderItems().stream()
                         .anyMatch(item -> item.getProduct().getUser().getId().equals(user.getId())))
-                .filter(order -> !order.isDeclined())
+                .filter(order -> !order.isDeclined() && !order.isFulfilled())
                 .collect(Collectors.toList());
 
         ordersToFulfill.forEach(order -> {
