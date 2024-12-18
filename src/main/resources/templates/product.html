@@ -1,37 +1,56 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+
+<head th:replace="~{layouts/main :: head}">
     <title th:text="${product.name}"></title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
+
 <body class="container">
+
+<!-- Product Name Heading -->
 <h1 class="text-2xl font-bold" th:text="${product.name}"></h1>
 
+<!-- Product Image Section -->
 <div class="card">
-    <h3 class="form-label">Description</h3>
-    <p class="form-input" th:text="${product.description}"></p>
+    <img th:if="${product.imagePath}" th:src="@{${product.imagePath}}" alt="Product Image" />
+    <img th:unless="${product.imagePath}" th:src="@{/images/default.png}" alt="Default Image" />
 </div>
 
+<!-- Product Price Section -->
 <div class="card">
     <h3 class="form-label">Price</h3>
     <p class="form-input" th:text="'$' + ${product.price}"></p>
 </div>
 
+
+<!-- Product Description Section -->
 <div class="card">
-    <h3 class="form-label">Image</h3>
-    <span class="form-group" th:if="${product.imagePath != null}">
-        <img class="form-input" th:src="@{${product.imagePath}}" alt="Product Image" width="300" height="300"/>
-    </span>
-    <span class="form-group" th:if="${product.imagePath == null}">
-        <p class="form-input">No image available</p>
-    </span>
+    <h3 class="form-label">Description</h3>
+    <p class="form-input" th:text="${product.description}"></p>
 </div>
 
+<!-- Product Owner Section -->
 <div class="card">
     <h3 class="form-label">Owner</h3>
     <p class="form-input" th:text="${product.user.username}"></p>
 </div>
 
-<a href="/dashboard" class="link btn">Back to dashboard</a>
+<!-- Add to Basket Form -->
+<form th:action="@{/api/basket/add}" method="post">
+    <!-- Hidden Input for Product ID -->
+    <input type="hidden" name="productId" th:value="${product.id}" />
+
+    <!-- Quantity Selection -->
+    <label for="quantity">Quantity:</label>
+    <input type="number" name="quantity" id="quantity" min="1"
+           th:attr="max=${product.quantityAvailable}" required/>
+
+    <!-- Submit Button -->
+    <button type="submit">Add to Basket</button>
+</form>
+
+<a href="/products/all" class="link btn">Back to All Products</a>
+
 </body>
 </html>

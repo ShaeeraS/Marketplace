@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,16 +51,19 @@ public class BasketController {
             model.addAttribute("basketItems", List.of());
         } else {
             Basket basket = basketOptional.get();
-            List<BasketItem> basketItems = basketItemRepository.findByBasketId(basket.getId());
-            basketItems.sort(Comparator.comparing(BasketItem::getId));
+            List<BasketItem> basketItems = basketItemRepository.findByBasketIdOrderByIdAsc(basket.getId());
             model.addAttribute("basketItems", basketItems);
+
+
         }
 
         return "basket";
     }
 
-        @PostMapping("/add")
-    public String addToBasket(@RequestParam("productId") Long productId, Model model) {
+    @PostMapping("/add")
+    public String addToBasket(@RequestParam("productId") Long productId,
+                              @RequestParam("quantity") Integer quantity,
+                              Model model) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = userDetails.getUsername();
 
@@ -79,6 +81,13 @@ public class BasketController {
         }
 
         Product product = productOptional.get();
+
+        // Check if requested quantity is <= product quantityAvailable
+        if (quantity > product.getQuantityAvailable()) {
+            model.addAttribute("error", "Requested quantity exceeds available stock");
+            return "error";
+        }
+
         Optional<Basket> basketOptional = basketRepository.findByUserId(user.getId());
         Basket basket;
         if (basketOptional.isEmpty()) {
@@ -92,12 +101,13 @@ public class BasketController {
         BasketItem basketItem = new BasketItem();
         basketItem.setBasket(basket);
         basketItem.setProduct(product);
-        basketItem.setQuantity(1);
+        basketItem.setQuantity(quantity);
 
         basketItemRepository.save(basketItem);
 
         return "redirect:/api/basket/view";
     }
+
 
     @PostMapping("/remove/{itemId}")
     public String removeFromBasket(@PathVariable Long itemId, Model model) {
@@ -131,48 +141,45 @@ public class BasketController {
         return "redirect:/api/basket/view";
     }
 
-    @PostMapping("/updateQuantity")
-public String updateQuantity(@RequestParam("basketItemId") Long basketItemId,
-                             @RequestParam("quantity") int quantity,
-                             Model model) {
-    // Get current authenticated user
-    UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    String username = userDetails.getUsername();
+    @PostMapping("/updateQuantity/{itemId}")
+    public String updateBasketItemQuantity(@PathVariable Long itemId,
+                                           @RequestParam("quantity") Integer newQuantity,
+                                           Model model) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
 
-    Optional<User> userOptional = userRepository.findByUsername(username);
-    if (userOptional.isEmpty()) {
-        model.addAttribute("error", "User not found");
-        return "error"; // Render an error page if user is not found
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            model.addAttribute("error", "User not found");
+            return "error";
+        }
+
+        User user = userOptional.get();
+
+        Optional<BasketItem> basketItemOptional = basketItemRepository.findById(itemId);
+        if (basketItemOptional.isEmpty()) {
+            model.addAttribute("error", "Basket item not found");
+            return "error";
+        }
+
+        BasketItem basketItem = basketItemOptional.get();
+
+        // Check user ownership
+        if (!basketItem.getBasket().getUser().getId().equals(user.getId())) {
+            model.addAttribute("error", "You are not authorized to modify this item");
+            return "error";
+        }
+
+        Product product = basketItem.getProduct();
+        if (newQuantity > product.getQuantityAvailable()) {
+            model.addAttribute("error", "Requested quantity exceeds available stock");
+            return "error";
+        }
+
+        basketItem.setQuantity(newQuantity);
+        basketItemRepository.save(basketItem);
+
+        return "redirect:/api/basket/view";
     }
-
-    User user = userOptional.get();
-    Optional<BasketItem> basketItemOptional = basketItemRepository.findById(basketItemId);
-    if (basketItemOptional.isEmpty()) {
-        model.addAttribute("error", "Basket item not found");
-        return "error";
-    }
-
-    BasketItem basketItem = basketItemOptional.get();
-    if (!basketItem.getBasket().getUser().getId().equals(user.getId())) {
-        model.addAttribute("error", "Unauthorized update");
-        return "error"; // Unauthorized update
-    }
-
-    // Update the quantity of the basket item
-    basketItem.setQuantity(quantity);
-    basketItemRepository.save(basketItem);
-
-    // Fetch updated basket items and sort by ID
-    List<BasketItem> basketItems = basketItemRepository.findByBasket_UserId(user.getId());
-    basketItems.sort(Comparator.comparing(BasketItem::getId));
-
-    // Add sorted items to the model
-    model.addAttribute("basketItems", basketItems);
-
-    return "basket"; // Re-render the basket view
-}
-
-
-
 
 }
