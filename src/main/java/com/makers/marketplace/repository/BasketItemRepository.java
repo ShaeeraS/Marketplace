@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface BasketItemRepository extends JpaRepository<BasketItem, Long> {
     List<BasketItem> findByBasketId(Long basketId);
+    List<BasketItem> findByBasket_UserId(Long userId);
     Optional<BasketItem> findById(Long id);  // Optional method to find by id
     List<BasketItem> findByBasketIdOrderByIdAsc(Long basketId);
 
