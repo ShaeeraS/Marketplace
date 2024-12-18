@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Orders to Fulfill</title>
+</head>
+<body>
+<h1>Orders to Fulfill</h1>
+
+<div th:if="${error}" style="color: red;">
+    <p th:text="${error}"></p>
+</div>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>Order ID</th>
+        <th>Product Name</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Total Price</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="order : ${orders}">
+        <td th:text="${order.id}"></td>
+        <td>
+            <ul>
+                <li th:each="item : ${order.orderItems}">
+                    <span th:text="${item.product.name}"></span>
+                </li>
+            </ul>
+        </td>
+        <td>
+            <ul>
+                <li th:each="item : ${order.orderItems}">
+                    <span th:text="${item.quantity}"></span>
+                </li>
+            </ul>
+        </td>
+        <td>
+            <ul>
+                <li th:each="item : ${order.orderItems}">
+                    <span th:text="${item.price}"></span>
+                </li>
+            </ul>
+        </td>
+        <td th:text="${#numbers.formatCurrency(order.totalPrice)}"></td>
+        <td>
+            <form th:action="@{/api/orders/fulfill}" method="post" style="display:inline;">
+                <input type="hidden" name="orderId" th:value="${order.id}" />
+                <button type="submit">Fulfill Order</button>
+            </form>
+            <form th:action="@{/api/orders/decline}" method="post" style="display:inline;">
+                <input type="hidden" name="orderId" th:value="${order.id}" />
+                <button type="submit">Decline Order</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

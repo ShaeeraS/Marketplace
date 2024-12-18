@@ -6,6 +6,8 @@
 <body>
 <h1>User Profile</h1>
 <p>Welcome, <span th:text="${username}">User</span>!</p>
+<p>Orders Fulfilled: <span th:text="${fulfilledOrdersCount}">0</span></p>
+<p>Orders Declined: <span th:text="${declinedOrdersCount}">0</span></p>
 <a href="/dashboard">Back to Dashboard</a>
 </body>
 </html>
