@@ -56,10 +56,9 @@
                         <!-- Add to Cart/Owned Button -->
                         <form th:action="@{/api/basket/add}" method="post" style="display:inline;">
                             <input type="hidden" name="productId" th:value="${product.id}" />
-                            <input type="number" name="quantity" min="1" required class="quantity-input">
                             <input type="hidden" name="userId" th:value="${userId}" />
-
-                            <button type="submit" class="btn-add-cart"
+                            
+                            <button type="submit" class="btn-add-cart" 
                                     th:if="${#authentication.name != product.user.username}">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="9" cy="21" r="1"/>
@@ -68,7 +67,7 @@
                                 </svg>
                                 Add to Cart
                             </button>
-
+                            
                             <button type="button" class="btn-owned" disabled
                                     th:if="${#authentication.name == product.user.username}">
                                 Owned
