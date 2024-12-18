@@ -7,7 +7,7 @@
     <div th:if="${success}" class="alert alert-success" role="alert">
         <span th:text="${success}"></span>
     </div>
-    
+
     <div th:if="${error}" class="alert alert-danger" role="alert">
         <span th:text="${error}"></span>
     </div>
@@ -46,6 +46,13 @@
                 </table>
             </div>
         </div>
+
+        <!-- Order Button Form -->
+        <form th:action="@{/api/basket/checkout}" method="post">
+            <button type="submit" class="btn btn-primary">
+                Place Order
+            </button>
+        </form>
     </div>
 </body>
 </html>
