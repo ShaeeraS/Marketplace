@@ -32,8 +32,8 @@
         </p>
 
         <!-- Product Image -->
-        <img th:if="${product.imagePath}" th:src="@{${product.imagePath}}" alt="Product Image" />
-        <img th:unless="${product.imagePath}" th:src="@{/images/default.png}" alt="Default Image" />
+        <img th:if="${product.imagePath}" th:src="@{${product.imagePath}}" alt="Product Image" width="150"/>
+        <img th:unless="${product.imagePath}" th:src="@{/images/default.png}" alt="Default Image" width="150"/>
 
         <!-- Product Price -->
         <p><span th:text="${product.price}"></span></p>
