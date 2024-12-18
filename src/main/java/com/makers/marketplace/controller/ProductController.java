@@ -10,8 +10,11 @@ import com.makers.marketplace.model.Product;
 import com.makers.marketplace.model.User;
 import com.makers.marketplace.repository.UserRepository;
 import com.makers.marketplace.service.ProductService;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Controller
@@ -24,6 +27,8 @@ public class ProductController {
     @Autowired
     private UserRepository userRepository;
 
+    private static final String UPLOAD_DIR = "uploads";
+
     @GetMapping("/new")
     public String showCreateProductForm(Model model) {
         model.addAttribute("product", new Product());
@@ -31,13 +36,36 @@ public class ProductController {
     }
 
     @PostMapping("/new")
-    public String createProduct(@ModelAttribute("product") Product product) {
+    public String createProduct(@ModelAttribute("product") Product product,
+                                @RequestParam("image") MultipartFile image) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         product.setUser(user);
+
+        //image Handling
+        if (!image.isEmpty()) {
+            try {
+                // Use an absolute path
+                String uploadDir = System.getProperty("user.dir") + "/uploads";
+                File uploadDirFile = new File(uploadDir);
+                if (!uploadDirFile.exists()) {
+                    uploadDirFile.mkdirs();
+                }
+
+                String originalFilename = image.getOriginalFilename();
+                String fileName = System.currentTimeMillis() + "_" + originalFilename;
+                File destinationFile = new File(uploadDirFile, fileName);
+                image.transferTo(destinationFile);
+
+                product.setImagePath("/uploads/" + fileName);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         productService.createProduct(product);
         return "redirect:/dashboard";
     }
@@ -78,11 +106,9 @@ public class ProductController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        // Fetch the User entity based on username
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Fetch the product to be deleted
         Product product = productService.findById(id);
         if (product == null) {
             // Handle the case where the product does not exist
@@ -90,18 +116,92 @@ public class ProductController {
             return "redirect:/products/my";
         }
 
-        // Verify that the product belongs to the authenticated user
         if (!product.getUser().getId().equals(user.getId())) {
             // Handle unauthorized deletion attempt
             redirectAttributes.addFlashAttribute("errorMessage", "You are not authorized to delete this product.");
             return "redirect:/products/my";
         }
 
-        // Perform deletion
         productService.deleteProductById(id);
         redirectAttributes.addFlashAttribute("successMessage", "Product deleted successfully.");
 
         return "redirect:/products/my";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String showEditProductForm(@PathVariable Long id, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Product product = productService.findById(id);
+        if (product == null) {
+            return "redirect:/products/my?error=ProductNotFound";
+        }
+
+        if (!product.getUser().getId().equals(user.getId())) {
+            return "redirect:/products/my?error=Unauthorized";
+        }
+
+        model.addAttribute("product", product);
+        return "edit_product";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String editProduct(@PathVariable Long id,
+                              @ModelAttribute("product") Product updatedProduct,
+                              @RequestParam("image") MultipartFile image,
+                              Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Product existingProduct = productService.findById(id);
+        if (existingProduct == null) {
+            return "redirect:/products/my?error=ProductNotFound";
+        }
+
+        if (!existingProduct.getUser().getId().equals(user.getId())) {
+            return "redirect:/products/my?error=Unauthorized";
+        }
+
+        existingProduct.setName(updatedProduct.getName());
+        existingProduct.setDescription(updatedProduct.getDescription());
+        existingProduct.setPrice(updatedProduct.getPrice());
+        existingProduct.setCategory(updatedProduct.getCategory());
+        existingProduct.setImagePath(updatedProduct.getImagePath());
+        existingProduct.setQuantityAvailable(updatedProduct.getQuantityAvailable());
+
+        // Handle image if a new one is uploaded
+        if (!image.isEmpty()) {
+            try {
+                String uploadDir = System.getProperty("user.dir") + "/uploads";
+                File uploadDirFile = new File(uploadDir);
+                if (!uploadDirFile.exists()) {
+                    uploadDirFile.mkdirs();
+                }
+
+                String originalFilename = image.getOriginalFilename();
+                String fileName = System.currentTimeMillis() + "_" + originalFilename;
+                File destinationFile = new File(uploadDirFile, fileName);
+                image.transferTo(destinationFile);
+
+                existingProduct.setImagePath("/uploads/" + fileName);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                // handle error if needed
+            }
+        }
+
+
+        productService.updateProduct(existingProduct);
+
+        return "redirect:/products/my?success=ProductUpdated";
     }
 
 
