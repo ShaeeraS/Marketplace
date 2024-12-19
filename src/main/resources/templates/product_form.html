@@ -1,55 +1,42 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>List a Product</title>
+    <title>List a New Product</title>
     <link rel="stylesheet" th:href="@{/css/edit-product.css}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
 </head>
 <body>
 
 <div th:insert="~{fragments/navbar :: navbar}"></div>
 
 <div class="container">
+    <nav class="breadcrumb">
+        <a href="/products/my" class="back-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to My Products
+        </a>
+    </nav>
 
     <div class="content-wrapper">
         <header>
-            <h1 th:text="'List Product'">List Product</h1>
+            <h1>List a New Product</h1>
         </header>
 
-        <!-- Alert Messages -->
-        <div th:if="${param.success}" class="alert alert-success">
-            Product updated successfully.
-        </div>
-
-        <div th:if="${param.error}" class="alert alert-error">
-            <span th:if="${param.error == 'ProductNotFound'}">Product not found.</span>
-            <span th:if="${param.error == 'Unauthorized'}">You are not authorized to edit this product.</span>
-        </div>
-
-        <!-- Edit Form -->
+        <!-- Form -->
         <div class="edit-form-container">
-            <form th:action="@{/products/edit/{id}(id=${product.id})}"
-                  th:object="${product}"
-                  method="post"
-                  enctype="multipart/form-data"
-                  class="edit-form">
-
+            <form th:action="@{/products/new}" th:object="${product}" method="post" enctype="multipart/form-data" class="edit-form">
                 <div class="form-grid">
                     <!-- Left Column -->
                     <div class="form-column">
                         <div class="form-group">
                             <label for="name">Product Name</label>
-                            <input type="text" id="name" th:field="*{name}" required
-                                   placeholder="Enter product name" />
+                            <input type="text" id="name" th:field="*{name}" required placeholder="Enter product name" />
                         </div>
 
                         <div class="form-group">
                             <label for="description">Description</label>
-                            <textarea id="description" th:field="*{description}" required
-                                      placeholder="Enter product description" rows="4"></textarea>
+                            <textarea id="description" th:field="*{description}" required placeholder="Enter product description" rows="4"></textarea>
                         </div>
 
                         <div class="form-row">
@@ -57,22 +44,19 @@
                                 <label for="price">Price</label>
                                 <div class="price-input">
                                     <span class="currency-symbol">£</span>
-                                    <input type="number" id="price" th:field="*{price}"
-                                           step="0.01" required min="0" />
+                                    <input type="number" id="price" th:field="*{price}" step="0.01" required min="0" />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="quantityAvailable">Quantity</label>
-                                <input type="number" id="quantityAvailable"
-                                       th:field="*{quantityAvailable}" min="1" required />
+                                <input type="number" id="quantityAvailable" th:field="*{quantityAvailable}" min="1" required />
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="category">Category</label>
-                            <input type="text" id="category" th:field="*{category}" required
-                                   placeholder="Enter product category" />
+                            <input type="text" id="category" th:field="*{category}" required placeholder="Enter product category" />
                         </div>
                     </div>
 
@@ -80,20 +64,15 @@
                     <div class="form-column">
                         <div class="form-group image-upload">
                             <label>Product Image</label>
-                            <div class="image-preview" th:if="${product.imagePath}">
-                                <img th:src="@{${product.imagePath}}" alt="Product Image" />
-                            </div>
                             <div class="upload-container">
-                                <input type="file" id="imagePath" name="image"
-                                       accept="image/*" class="file-input" />
-                                <label for="imagePath" class="upload-label">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                         stroke="currentColor" stroke-width="2">
+                                <input type="file" id="image" name="image" accept="image/*" class="file-input" />
+                                <label for="image" class="upload-label">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                         <polyline points="17 8 12 3 7 8"/>
                                         <line x1="12" y1="3" x2="12" y2="15"/>
                                     </svg>
-                                    <span>Choose image</span>
+                                    <span>Choose an image</span>
                                 </label>
                             </div>
                         </div>
@@ -101,8 +80,8 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">List Product</button>
-                    <a href="/dashboard" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Submit Product</button>
+                    <a href="/products/my" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>
         </div>
