@@ -44,19 +44,19 @@
                       method="post"
                       enctype="multipart/form-data"
                       class="edit-form">
-                    
+
                     <div class="form-grid">
                         <!-- Left Column -->
                         <div class="form-column">
                             <div class="form-group">
                                 <label for="name">Product Name</label>
-                                <input type="text" id="name" th:field="*{name}" required 
+                                <input type="text" id="name" th:field="*{name}" required
                                        placeholder="Enter product name" />
                             </div>
 
                             <div class="form-group">
                                 <label for="description">Description</label>
-                                <textarea id="description" th:field="*{description}" required 
+                                <textarea id="description" th:field="*{description}" required
                                           placeholder="Enter product description" rows="4"></textarea>
                             </div>
 
@@ -64,22 +64,22 @@
                                 <div class="form-group">
                                     <label for="price">Price</label>
                                     <div class="price-input">
-                                        <span class="currency-symbol">$</span>
-                                        <input type="number" id="price" th:field="*{price}" 
+                                        <span class="currency-symbol">£</span>
+                                        <input type="number" id="price" th:field="*{price}"
                                                step="0.01" required min="0" />
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="quantityAvailable">Quantity</label>
-                                    <input type="number" id="quantityAvailable" 
+                                    <input type="number" id="quantityAvailable"
                                            th:field="*{quantityAvailable}" min="1" required />
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="category">Category</label>
-                                <input type="text" id="category" th:field="*{category}" required 
+                                <input type="text" id="category" th:field="*{category}" required
                                        placeholder="Enter product category" />
                             </div>
                         </div>
@@ -92,10 +92,10 @@
                                     <img th:src="@{${product.imagePath}}" alt="Product Image" />
                                 </div>
                                 <div class="upload-container">
-                                    <input type="file" id="imagePath" name="image" 
+                                    <input type="file" id="imagePath" name="image"
                                            accept="image/*" class="file-input" />
                                     <label for="imagePath" class="upload-label">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" 
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                              stroke="currentColor" stroke-width="2">
                                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                             <polyline points="17 8 12 3 7 8"/>
