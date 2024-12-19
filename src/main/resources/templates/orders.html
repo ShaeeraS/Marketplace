@@ -1,34 +1,47 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:replace="~{layouts/main :: head}">
     <title>My Orders</title>
-    <link rel="stylesheet" th:href="@{/css/orders.css}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-<h1>My Orders</h1>
+<div th:fragment="content" class="container">
+    <div class="card" style="max-width: 900px; margin: 2rem auto;">
+        <h1 style="text-align: center; margin-top: 0;">My Orders</h1>
 
-<div th:if="${error}" style="color: red;">
-    <p th:text="${error}"></p>
+        <!-- Display Error Message -->
+        <div th:if="${error}" class="alert alert-error">
+            <p th:text="${error}"></p>
+        </div>
+
+        <!-- Styled Table -->
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Total Price</th>
+                    <th>Fulfilled</th>
+                    <th>Declined</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order : ${orders}">
+                    <td th:text="${order.id}"></td>
+                    <td th:text="${#numbers.formatCurrency(order.totalPrice)}"></td>
+                    <td>
+                        <span th:if="${order.fulfilled}" class="badge-success">Yes</span>
+                        <span th:unless="${order.fulfilled}" class="badge-error">No</span>
+                    </td>
+                    <td>
+                        <span th:if="${order.declined}" class="badge-error">Yes</span>
+                        <span th:unless="${order.declined}" class="badge-success">No</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-
-<table border="1">
-    <thead>
-    <tr>
-        <th>Order ID</th>
-        <th>Total Price</th>
-        <th>Fulfilled</th>
-        <th>Declined</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="order : ${orders}">
-        <td th:text="${order.id}"></td>
-        <td th:text="${#numbers.formatCurrency(order.totalPrice)}"></td>
-        <td th:text="${order.fulfilled}"></td>
-        <td th:text="${order.declined}"></td>
-    </tr>
-    </tbody>
-</table>
-
 </body>
 </html>
