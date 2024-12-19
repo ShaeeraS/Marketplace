@@ -205,4 +205,13 @@ public class ProductController {
     }
 
 
+    @GetMapping("/search")
+    public String searchProducts(@RequestParam("query") String query, Model model) {
+        List<Product> products = productService.searchProductsByName(query);
+        model.addAttribute("products", products);
+        model.addAttribute("query", query); // Preserve the search term in the view
+        return "products"; // Assuming you want to display results on the "products.html" page
+    }
+
+
 }
