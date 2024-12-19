@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:replace="~{layouts/main :: head}">
     <title>Profile</title>
 </head>
 <body>
-<h1>User Profile</h1>
-<p>Welcome, <span th:text="${username}">User</span>!</p>
-<p>Orders Fulfilled: <span th:text="${fulfilledOrdersCount}">0</span></p>
-<p>Orders Declined: <span th:text="${declinedOrdersCount}">0</span></p>
-<a href="/dashboard">Back to Dashboard</a>
+<div th:fragment="content">
+    <div class="card container" style="max-width: 600px; margin: 2rem auto;">
+        <h1 style="margin-top: 0; text-align: center;">User Profile</h1>
+        <p style="text-align: center;">Welcome, <span th:text="${username}">User</span>!</p>
+        <p>Orders Fulfilled: <span th:text="${fulfilledOrdersCount}">0</span></p>
+        <p>Orders Declined: <span th:text="${declinedOrdersCount}">0</span></p>
+
+        <div style="display: flex; justify-content: center; margin-top: 1.5rem;">
+            <a href="/dashboard" class="btn btn-primary">Back to Dashboard</a>
+        </div>
+    </div>
+</div>
 </body>
 </html>
