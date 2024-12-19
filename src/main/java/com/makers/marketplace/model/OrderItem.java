@@ -1,7 +1,14 @@
 package com.makers.marketplace.model;
 
+import com.makers.marketplace.model.Order;
+import com.makers.marketplace.model.Product;
+import com.makers.marketplace.model.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "order_items")
 public class OrderItem {
@@ -17,7 +24,10 @@ public class OrderItem {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // Add order_id when Sajjad makes it
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
 
     @Column(nullable = false)
     private Integer quantity;
@@ -34,44 +44,4 @@ public class OrderItem {
         this.price = price;
     }
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
 }

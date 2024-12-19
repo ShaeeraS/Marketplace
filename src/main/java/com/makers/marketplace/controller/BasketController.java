@@ -1,11 +1,9 @@
 package com.makers.marketplace.controller;
 
-import com.makers.marketplace.model.Basket;
-import com.makers.marketplace.model.BasketItem;
-import com.makers.marketplace.model.Product;
-import com.makers.marketplace.model.User;
+import com.makers.marketplace.model.*;
 import com.makers.marketplace.repository.BasketItemRepository;
 import com.makers.marketplace.repository.BasketRepository;
+import com.makers.marketplace.repository.OrderRepository;
 import com.makers.marketplace.repository.ProductRepository;
 import com.makers.marketplace.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/api/basket")
@@ -27,6 +26,9 @@ public class BasketController {
 
     @Autowired
     private BasketItemRepository basketItemRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -106,6 +108,54 @@ public class BasketController {
         basketItemRepository.save(basketItem);
 
         return "redirect:/api/basket/view";
+    }
+
+    @PostMapping("/checkout")
+    public String checkout(Model model) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
+
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            model.addAttribute("error", "User not found");
+            return "error";
+        }
+
+        User user = userOptional.get();
+        Optional<Basket> basketOptional = basketRepository.findByUserId(user.getId());
+        if (basketOptional.isEmpty()) {
+            model.addAttribute("error", "Basket is empty");
+            return "error";
+        }
+
+        Basket basket = basketOptional.get();
+        List<BasketItem> basketItems = basketItemRepository.findByBasketIdOrderByIdAsc(basket.getId());
+        if (basketItems.isEmpty()) {
+            model.addAttribute("error", "Basket is empty");
+            return "error";
+        }
+
+        // Create order items from basket items
+        List<OrderItem> orderItems = basketItems.stream().map(basketItem -> {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setProduct(basketItem.getProduct());
+            orderItem.setQuantity(basketItem.getQuantity());
+            orderItem.setPrice(basketItem.getProduct().getPrice());
+            orderItem.setUser(user); // Set the user
+            return orderItem;
+        }).collect(Collectors.toList());
+
+        // Calculate total price
+        double totalPrice = orderItems.stream().mapToDouble(item -> item.getPrice() * item.getQuantity()).sum();
+
+        // Create and save the order
+        Order order = new Order(user.getId(), orderItems, totalPrice);
+        orderRepository.save(order);
+
+        // Clear the basket
+        basketItemRepository.deleteAll(basketItems);
+
+        return "redirect:/api/orders/thanks?orderId=" + order.getId();
     }
 
 
