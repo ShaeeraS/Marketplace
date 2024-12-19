@@ -4,6 +4,8 @@
     <title>Profile</title>
 </head>
 <body>
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+
 <h1>User Profile</h1>
 <p>Welcome, <span th:text="${username}">User</span>!</p>
 <a href="/dashboard">Back to Dashboard</a>
