@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Orders</title>
+    <link rel="stylesheet" th:href="@{/css/orders.css}">
+</head>
+<body>
+<h1>My Orders</h1>
+
+<div th:if="${error}" style="color: red;">
+    <p th:text="${error}"></p>
+</div>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>Order ID</th>
+        <th>Total Price</th>
+        <th>Fulfilled</th>
+        <th>Declined</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="order : ${orders}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${#numbers.formatCurrency(order.totalPrice)}"></td>
+        <td th:text="${order.fulfilled}"></td>
+        <td th:text="${order.declined}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

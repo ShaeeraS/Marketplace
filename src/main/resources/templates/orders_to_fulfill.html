@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Orders to Fulfill</title>
+    <link rel="stylesheet" th:href="@{/css/orders-fulfill.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Orders to Fulfill</h1>
+        </header>
+
+        <div th:if="${error}" class="alert alert-error">
+            <p th:text="${error}"></p>
+        </div>
+
+        <div class="orders-table">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="order : ${orders}">
+                            <td class="order-id" th:text="${order.id}"></td>
+                            <td>
+                                <ul class="order-list">
+                                    <li th:each="item : ${order.orderItems}">
+                                        <span th:text="${item.product.name}"></span>
+                                    </li>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul class="order-list">
+                                    <li th:each="item : ${order.orderItems}">
+                                        <span th:text="${item.quantity}"></span>
+                                    </li>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul class="order-list">
+                                    <li th:each="item : ${order.orderItems}">
+                                        <span th:text="${item.price}"></span>
+                                    </li>
+                                </ul>
+                            </td>
+                            <td class="total-price" th:text="${#numbers.formatCurrency(order.totalPrice)}"></td>
+                            <td class="actions">
+                                <div class="button-group">
+                                    <form th:action="@{/api/orders/fulfill}" method="post">
+                                        <input type="hidden" name="orderId" th:value="${order.id}" />
+                                        <button type="submit" class="btn btn-fulfill">Fulfill Order</button>
+                                    </form>
+                                    <form th:action="@{/api/orders/decline}" method="post">
+                                        <input type="hidden" name="orderId" th:value="${order.id}" />
+                                        <button type="submit" class="btn btn-decline">Decline Order</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
