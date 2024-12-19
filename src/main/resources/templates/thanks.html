@@ -5,6 +5,9 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
+
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+
 <div th:fragment="content" class="container">
     <header>
         <h1>Thank you for your order!</h1>

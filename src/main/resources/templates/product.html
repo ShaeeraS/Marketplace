@@ -5,6 +5,9 @@
     <link rel="stylesheet" th:href="@{/css/product.css}">
 </head>
 <body>
+
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+
     <div th:if="${success}" class="alert alert-success" role="alert">
         <span th:text="${success}"></span>
     </div>

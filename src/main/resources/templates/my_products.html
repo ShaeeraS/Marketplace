@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,10 @@
   <link rel="stylesheet" th:href="@{/css/myProducts.css}">
 </head>
 
-<body class="container">
+<body>
+
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+
 <!-- Success Message -->
 <div th:if="${successMessage}" class="alert alert-success active">
   <p th:text="${successMessage}"></p>

@@ -8,6 +8,9 @@
 </head>
 
 <body>
+
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+
 <!-- Alert Messages -->
 <div th:if="${success}" class="alert alert-success">
     <span th:text="${success}">Operation completed successfully!</span>

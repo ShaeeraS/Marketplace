@@ -3,8 +3,13 @@
 <head th:replace="~{layouts/main :: head}">
     <title>Dashboard</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"/>
 </head>
 <body>
+
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+
 <div th:fragment="content" class="container">
     <div class="card" style="padding: 2rem; margin: 2rem auto; max-width: 900px;">
         <h1 style="text-align: center; margin-top: 0;">Welcome to Your Dashboard</h1>
