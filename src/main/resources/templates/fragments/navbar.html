@@ -12,8 +12,10 @@
         </a>
       </div>
       <div class="search-box">
-        <i class="fa-solid fa-magnifying-glass" style="color: #585858;"></i>
-        <input type="text" placeholder="Search Marketplace">
+        <form th:action="@{/products/search}" method="get">
+          <i class="fa-solid fa-magnifying-glass" style="color: #585858;"></i>
+          <input type="text" name="query" placeholder="Search Marketplace">
+        </form>
       </div>
     </div>
 
